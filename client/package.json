@@ -13,7 +13,6 @@
     "@reduxjs/toolkit": "^2.2.5",
     "@types/redux": "^3.6.0",
     "@types/redux-thunk": "^2.1.0",
-    "axios": "^1.7.2",
     "firebase": "^10.12.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
