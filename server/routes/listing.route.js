@@ -7,3 +7,4 @@ const router = Router();
 router.get('/get-all',getAllListings).post('/create',verifyToken,createListing)
 
 export default router;
+ 

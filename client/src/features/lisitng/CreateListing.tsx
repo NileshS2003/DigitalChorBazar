@@ -13,7 +13,6 @@ import {
 } from "firebase/storage";
 import { errorhandler } from "../../utils";
 import { RootState } from "../../app/store";
-// import errorhandler from "../utils";
 
 function CreateListing() {
   const { register, handleSubmit } = useForm();
@@ -23,14 +22,15 @@ function CreateListing() {
   const [ImageUrls, setImageUrls] = useState<string[]>([]);
 
   const [uploading, setUploading] = useState(false);
-  const [offer, setOffer] = useState(false);
   const [error, setError] = useState<string>();
 
   const navigate = useNavigate();
 
-  const handleFileChange = (e: React.FormEvent<HTMLInputElement>) => {
-    const filez = Array.from(e.target.files as File[]);
-    setFiles(filez);
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const filez = Array.from(e.target.files);
+      setFiles(filez);
+    }
   };
 
   const handelImageSubmit = async () => {
@@ -91,21 +91,19 @@ function CreateListing() {
         );
 
       // This is for not taking filelist from input as it is. If not takem it will be filelist instead of updated urlstring here data is destructured as inmageurl and rest of what we want.
-      const { imageUrls, regularPrice, discountedPrice, ...rest } = data;
-      if (discountedPrice > regularPrice) {
-        return (
-          errorhandler(
-            401,
-            "Regular Price should be more than discounted Price"
-          ),
-          setError("Regular Price should be more than discounted Price")
-        );
-      }
+      const { imageUrls,  ...rest } = data;
+      // title: { type: String, required: true },
+      // description: { type: String, required: true },
+      // price: { type: Number, required: true },
+      // type: { type: String, required: true },
+      // photos: { type: [String], required: true },
+      // used_time: { type: String, required: true },
+      // isNegotialble: { type: Boolean, required: true },
+      // seller_Id: { type: Schema.Types.ObjectId, ref: "User", required: true },
+      // sold: { type: Boolean, default: false },
       const mahiti = {
-        userRef: loggedInUser?._id,
-        imageUrls: ImageUrls,
-        regularPrice: regularPrice,
-        discountedPrice,
+        seller_Id: loggedInUser?._id,
+        photos: ImageUrls,
         ...rest,
       };
       console.log(mahiti);
@@ -118,7 +116,7 @@ function CreateListing() {
       });
       const doc = await res.json();
       console.log(doc);
-      navigate(`/your-listing/${doc._id}`);
+      // navigate(`/your-listing/${doc._id}`);
     } catch (err) {
       console.log(err);
     }
@@ -142,29 +140,29 @@ function CreateListing() {
         <div className="space-y-12">
           <div className="border-b border-gray-900/10 pb-12">
             <h2 className="text-base font-semibold leading-7 text-gray-900">
-              Owner Information
+              Product Information
             </h2>
             <p className="mt-1 text-sm leading-6 text-gray-600">
-              Use a permanent address where you can receive mail.
+              Give it a try.
             </p>
 
             <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
               <div className="sm:col-span-3">
                 <label
-                  htmlFor="name"
+                  htmlFor="title"
                   className="block text-sm font-medium leading-6 text-gray-900"
                 >
-                  name
+                  title
                 </label>
                 <div className="mt-2">
                   <input
                     type="text"
-                    {...register("name", {
-                      required: "name is required",
+                    {...register("title", {
+                      required: "title is required",
                     })}
-                    name="name"
-                    id="name"
-                    autoComplete="name"
+                    name="title"
+                    id="title"
+                    autoComplete="title"
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   />
                 </div>
@@ -206,8 +204,7 @@ function CreateListing() {
                     type="file"
                     id="images"
                     accept="image/*"
-                    onInput={(e) => handleFileChange(e)}
-                    {...register("imageUrls", { required: true })}
+                    onChange={handleFileChange}
                     multiple
                   />
                   <button
@@ -241,39 +238,39 @@ function CreateListing() {
                   ))}
               </div>
 
-              <div className="col-span-full">
+              {/* <div className="col-span-full">
                 <label
-                  htmlFor="addresses"
+                  htmlFor="type"
                   className="block text-sm font-medium leading-6 text-gray-900"
                 >
-                  Street address
+                  Product Type
                 </label>
                 <div className="mt-2">
                   <input
                     type="text"
-                    {...register("address", {
-                      required: "addresses is required",
+                    {...register("type", {
+                      required: "type is required",
                     })}
-                    id="addresses"
+                    id="type"
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   />
                 </div>
-              </div>
+              </div> */}
 
               <div className="sm:col-span-2 sm:col-start-1">
                 <label
-                  htmlFor="city"
+                  htmlFor="type"
                   className="block text-sm font-medium leading-6 text-gray-900"
                 >
-                  City
+                  Product Type
                 </label>
                 <div className="mt-2">
                   <input
                     type="text"
-                    {...register("city", {
-                      required: "city name is required",
+                    {...register("type", {
+                      required: "type is required",
                     })}
-                    id="city"
+                    id="type"
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   />
                 </div>
@@ -281,19 +278,18 @@ function CreateListing() {
 
               <div className="sm:col-span-2">
                 <label
-                  htmlFor="state"
+                  htmlFor="used_time"
                   className="block text-sm font-medium leading-6 text-gray-900"
                 >
-                  State
+                  How Old?
                 </label>
                 <div className="mt-2">
                   <input
                     type="text"
-                    {...register("state", {
-                      required: "state is required",
+                    {...register("used_time", {
+                      required: "used_time is required",
                     })}
-                    id="region"
-                    autoComplete="address-level1"
+                    id="used_time"
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   />
                 </div>
@@ -301,224 +297,42 @@ function CreateListing() {
 
               <div className="sm:col-span-2">
                 <label
-                  htmlFor="pinCode"
+                  htmlFor="price"
                   className="block text-sm font-medium leading-6 text-gray-900"
                 >
-                  ZIP / Postal code
+                  Price
                 </label>
                 <div className="mt-2">
                   <input
                     type="text"
-                    {...register("pinCode", {
-                      required: "pinCode is required",
+                    {...register("price", {
+                      required: "price is required",
                     })}
-                    id="pinCode"
+                    id="price"
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   />
                 </div>
               </div>
             </div>
-          </div>
-
-          <div className="border-b border-gray-900/10 pb-12 grid sm:grid-cols-2 gap-4">
-            <div className="mt-10 space-y-10">
-              <fieldset>
-                <legend className="text-sm font-semibold leading-6 text-gray-900">
-                  Important Details
-                </legend>
-                <div className="mt-6 space-y-6 flex-row">
-                  <div className="relative flex gap-x-3">
-                    <div className="flex h-6 items-center">
-                      <input
-                        id="sell"
-                        // name="sell"
-                        value={`sell`}
-                        {...register("type")}
-                        type="radio"
-                        // checked={type}
-                        className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
-                      />
-                    </div>
-                    <div className="text-sm leading-6">
-                      <label
-                        htmlFor="sell"
-                        className="font-medium text-gray-900"
-                      >
-                        Sell
-                      </label>
-                      <p className="text-gray-500">DO Put Best Pricing</p>
-                    </div>
-                  </div>
-                  <div className="relative flex gap-x-3">
-                    <div className="flex h-6 items-center">
-                      <input
-                        id="rent"
-                        // name="rent"
-                        {...register("type")}
-                        type="radio"
-                        value={`rent`}
-                        className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
-                      />
-                    </div>
-                    <div className="text-sm leading-6">
-                      <label
-                        htmlFor="rent"
-                        className="font-medium text-gray-900"
-                      >
-                        Rent
-                      </label>
-                      <p className="text-gray-500">Be reasonable</p>
-                    </div>
-                  </div>
-
-                  <div className="relative flex gap-x-3">
-                    <div className="flex h-6 items-center">
-                      <input
-                        id="parking"
-                        // name="parking"
-                        {...register("parking")}
-                        type="checkbox"
-                        className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
-                      />
-                    </div>
-                    <div className="text-sm leading-6">
-                      <label
-                        htmlFor="parking"
-                        className="font-medium text-gray-900"
-                      >
-                        Parking Spot
-                      </label>
-                      <p className="text-gray-500">Be reasonable</p>
-                    </div>
-                  </div>
-                  <div className="relative flex gap-x-3">
-                    <div className="flex h-6 items-center">
-                      <input
-                        id="furnished"
-                        // name="furnished"
-                        {...register("furnished")}
-                        type="checkbox"
-                        className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
-                      />
-                    </div>
-                    <div className="text-sm leading-6">
-                      <label
-                        htmlFor="furnished"
-                        className="font-medium text-gray-900"
-                      >
-                        Furnished
-                      </label>
-                      <p className="text-gray-500">Be reasonable</p>
-                    </div>
-                  </div>
-                </div>
-                <div className="mt-6 space-y-6">
-                  <div className="relative flex gap-x-3">
-                    <div className="flex h-6 items-center">
-                      <input
-                        id="offer"
-                        // name="offer"
-                        {...register("offer")}
-                        onChange={() => setOffer(!offer)}
-                        type="checkbox"
-                        className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
-                      />
-                    </div>
-                    <div className="text-sm leading-6">
-                      <label
-                        htmlFor="offer"
-                        className="font-medium text-gray-900"
-                      >
-                        Offers
-                      </label>
-                      <p className="text-gray-500">
-                        Get notified when a candidate accepts or rejects an
-                        offer.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </fieldset>
-            </div>
-            <div className="mt-10 space-y-10">
-              <div className="sm:col-span-2 sm:flex items-center mt-3">
-                <label
-                  htmlFor="bedrooms"
-                  className="block text-sm leading-6 text-gray-900"
-                >
-                  Bedrooms
-                </label>
-                <div>
-                  <input
-                    type="number"
-                    {...register("bedrooms", {
-                      required: "bedrooms is required",
-                    })}
-                    id="bedrooms"
-                    className="block w-14 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 ml-3 no-spinner"
-                  />
-                </div>
+            <div className="relative flex gap-x-3 mt-3">
+              <div className="flex h-6 items-center">
+                <input
+                  id="isNegotialble"
+                  // name="furnished"
+                  {...register("isNegotialble")}
+                  type="checkbox"
+                  className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                />
               </div>
-              <div className="sm:col-span-2 sm:flex items-center mt-3">
+              <div className="text-sm leading-6">
                 <label
-                  htmlFor="bathrooms"
-                  className="block text-sm leading-6 text-gray-900"
+                  htmlFor="isNegotialble"
+                  className="font-medium text-gray-900"
                 >
-                  Baths
+                  Offers
                 </label>
-                <div>
-                  <input
-                    type="number"
-                    {...register("bathrooms", {
-                      required: "baths is required",
-                    })}
-                    id="bathrooms"
-                    className="block w-14 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 ml-3 no-spinner  "
-                  />
-                </div>
+                <p className="text-gray-500">Be reasonable</p>
               </div>
-              <div className="sm:col-span-2 sm:flex items-center mt-3">
-                <label
-                  htmlFor="regularPrice"
-                  className="block text-sm leading-6 text-gray-900"
-                >
-                  Regular Price
-                </label>
-                <div>
-                  <input
-                    type="number"
-                    {...register("regularPrice", {
-                      required: "regularPrice is required",
-                    })}
-                    id="regularPrice"
-                    className="block w-14 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 ml-3 no-spinner"
-                  />
-                </div>
-                <p className="text-gray-500 ml-3">Be reasonable</p>
-              </div>
-              {offer && (
-                <div className="sm:col-span-2 sm:flex items-center mt-3">
-                  <label
-                    htmlFor="discountedPrice"
-                    className="block text-sm leading-6 text-gray-900"
-                  >
-                    Discounted Price
-                  </label>
-                  <div>
-                    <input
-                      type="number"
-                      step="1"
-                      pattern="\d*"
-                      {...register("discountedPrice", {
-                        required: "discountedPrice is required",
-                      })}
-                      id="discountedPrice"
-                      className="block w-14 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 ml-3 appearance-none no-spinner"
-                    />
-                  </div>
-                  <p className="text-gray-500 ml-3">Be reasonable</p>
-                </div>
-              )}
             </div>
           </div>
         </div>

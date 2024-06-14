@@ -3,9 +3,9 @@ import { useForm } from "react-hook-form";
 // import { navigate } from "@reach/router";
 import { useAppDispatch } from "../../app/store";
 import { ErrorPayloadType } from "../../interfaces/error.interface";
-import { SignInUserAsync } from "./authSlice";
+import { SignInUserAsync, fetchUserAsync } from "./authSlice";
 import { IUserData } from "../../interfaces/user.interface";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import OAuth from "../../components/OAuth";
 // import OAuth from "../components/OAuth";
 
@@ -13,12 +13,22 @@ export default function SignIn() {
   const {
     register,
     handleSubmit,
-    formState: { errors },
   } = useForm();
   const [loading, setLoading] = useState(false);
 
+  
+
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+
+  useEffect(()=>{
+     const  fetchUserIfLoggedIUn= async() => {
+       const user=await dispatch(fetchUserAsync())
+       if(user)navigate('/')
+    }
+
+    fetchUserIfLoggedIUn()
+  })
 
   const onSubmit = async (data: any) => {
     setLoading(true);

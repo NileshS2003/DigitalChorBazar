@@ -11,7 +11,7 @@ const ListingSchema = new mongoose.Schema(
     used_time: { type: String, required: true },
     isNegotialble: { type: Boolean, required: true },
     seller_Id: { type: Schema.Types.ObjectId, ref: "User", required: true },
-    sold: { type: Boolean, required: true },
+    sold: { type: Boolean, default: false },
   },
   { timestamps: true }
 );
@@ -19,3 +19,4 @@ const ListingSchema = new mongoose.Schema(
 // Create and export the User model
 const Listing = mongoose.model("Listing", ListingSchema);
 export default Listing;
+ 

@@ -20,7 +20,7 @@ export const CreateUser = async (userdata: IUserData): Promise<IUser> => {
 };
 
 export function SignOutUser() {
-  return new Promise(async (resolve,reject) => {
+  return new Promise(async (resolve, reject) => {
     try {
       const response = await fetch("/api/auth/signout", {
         method: "GET",
@@ -32,11 +32,11 @@ export function SignOutUser() {
       console.log(response);
       if (!response.ok) {
         const errorData = await response.json();
-        console.log(errorData)
+        console.log(errorData);
       }
       resolve({ data: "success" });
     } catch (error) {
-      reject(error)
+      reject(error);
     }
   });
 }
@@ -54,7 +54,7 @@ export function SignInUser(userData: IUserData) {
       });
       if (response.ok) {
         const data = await response.json();
-        resolve({ data });
+        resolve(data);
       } else {
         const err = await response.json();
         console.log(err);
@@ -81,7 +81,8 @@ export function fetchUser() {
         reject({ errorData });
       } else {
         const data = await response.json();
-        resolve({ data });
+        console.log(data);
+        resolve(data);
       }
     } catch (error) {
       reject({ error });
@@ -105,7 +106,7 @@ export function SignInWithGoogle(userData: {
       });
       if (response.ok) {
         const data = await response.json();
-        resolve({ data });
+        resolve(data);
       } else {
         const err = await response.json();
         console.log(err);

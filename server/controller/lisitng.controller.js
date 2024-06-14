@@ -21,7 +21,7 @@ export const createListing = async (req, res, next) => {
     // Add the new listing's ID to the user's listings array
     user.listings.push(listing.id);
 
-    // Save the updated user document
+    // Save the updated user document 
     await user.save();
 
     // Return the created listing

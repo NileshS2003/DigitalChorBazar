@@ -9,6 +9,7 @@ import CreateListingPage from "./pages/CreateListingPage.tsx";
 import { useAppDispatch } from "./app/store.ts";
 import { useEffect } from "react";
 import { fetchUserAsync } from "./features/Auth/authSlice.ts";
+// import PrivateRoute from "./components/PrivateRoute.tsx";
 
 function App() {
   const dispatch = useAppDispatch();
@@ -24,8 +25,9 @@ function App() {
         <Route path="/sign-in" element={<SignInPage />} />
         <Route path="/sign-up" element={<SignUpPage />} />
         <Route path="/about" element={<About />} />
+        {/* <Route element={<PrivateRoute />}> */}
         <Route path="/create-listing" element={<CreateListingPage />} />
-
+        {/* </Route> */}
       </Routes>
     </BrowserRouter>
   );
