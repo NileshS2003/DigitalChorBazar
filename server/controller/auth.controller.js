@@ -42,57 +42,6 @@ export const signup = async (req, res, next) => {
   }
 };
 
-// export const signup = asyncHandler(async (req, res) => {
-//   const { email, username, password } = req.body;
-
-//   const existedUser = await User.findOne({
-//     $or: [{ username }, { email }],
-//   });
-
-//   if (existedUser) {
-//     throw new ApiError(409, "User with email or username already exists", []);
-//   }
-//   const user = await User.create({
-//     email,
-//     password,
-//     username
-//   });
-
-//   /**
-//    * unHashedToken: unHashed token is something we will send to the user's mail
-//    * hashedToken: we will keep record of hashedToken to validate the unHashedToken in verify email controller
-//    * tokenExpiry: Expiry to be checked before validating the incoming token
-//    */
-//   const { unHashedToken, hashedToken, tokenExpiry } =
-//     user.generateTemporaryToken();
-
-//   /**
-//    * assign hashedToken and tokenExpiry in DB till user clicks on email verification link
-//    * The email verification is handled by {@link verifyEmail}
-//    */
-//   user.emailVerificationToken = hashedToken;
-//   user.emailVerificationExpiry = tokenExpiry;
-//   await user.save({ validateBeforeSave: false });
-
-//   const createdUser = await User.findById(user._id).select(
-//     "-password -refreshToken -emailVerificationToken -emailVerificationExpiry"
-//   );
-
-//   if (!createdUser) {
-//     throw new ApiError(500, "Something went wrong while registering the user");
-//   }
-
-//   return res
-//     .status(201)
-//     .json(
-//       new ApiResponse(
-//         200,
-//         { user: createdUser },
-//         "Users registered successfully and verification email has been sent on your email."
-//       )
-//     );
-// });
-
 export const signin = async (req, res, next) => {
   const { email, password } = req.body;
   try {
@@ -110,45 +59,70 @@ export const signin = async (req, res, next) => {
   }
 };
 
-// export const google = async (req, res, next) => {
-//   const { email, username, photo } = req.body;
-//   try {
-//     const alreadyUser = await User.findOne({ email });
-//     if (alreadyUser) {
-//       const token = jwt.sign({ id: alreadyUser._id }, process.env.JWT_SECRET);
-//       const { password: pass, ...rest } = alreadyUser._doc;
+export const google = async (req, res, next) => {
+  try {
+    // 1. Extract Data (consider validation):
+    const { email, username } = req.body;
 
-//       res
-//         .cookie("access_token", token, { httpOnly: true })
-//         .status(200)
-//         .json(rest);
-//     } else {
-//       const genreatepassword =
-//         Math.random().toString(36).slice(-8) +
-//         Math.random().toString(36).slice(-8);
-//       const salt = await bcryptjs.genSalt(10);
-//       const hashedPass = bcryptjs.hashSync(genreatepassword, salt); // hash password
-//       const newUser = new User({
-//         name: username,
-//         username:
-//           username.split(" ").join("").toLowerCase() +
-//           Math.random().toString(36).slice(-4),
-//         email,
-//         password: hashedPass,
-//         avatar: photo,
-//       });
-//       // console.log(doc);
-//       // console.log(doc)
-//       const doc = await newUser.save();
-//       const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET);
-//       const { password: pass, ...rest } = newUser._doc;
+    if (!email) {
+      return res.status(400).json({ message: "Missing required field: email" });
+    }
 
-//       res
-//         .cookie("access_token", token, { httpOnly: true })
-//         .status(200)
-//         .json(rest);
-//     }
-//   } catch (error) {
-//     next(error);
-//   }
-// };
+    // 2. Check Existing User:
+    const alreadyUser = await User.findOne({ email });
+
+    // 3. Existing User Handling:
+    if (alreadyUser) {
+      const token = jwt.sign({ id: alreadyUser._id }, process.env.JWT_SECRET);
+      const { password: _, ...rest } = alreadyUser._doc; // Exclude password
+
+      console.log(rest);
+
+      return res.cookie("access_token", token).status(200).json(rest);
+    }
+
+    // 4. New User Creation (improved username generation):
+    const salt = await bcryptjs.genSalt(10);
+    const generatePassword = () => Math.random().toString(36).slice(-12); // 12 characters
+    const hashedPass = bcryptjs.hashSync(generatePassword(), salt);
+
+    const newUser = new User({
+      username: username
+        ? username.trim().toLowerCase()
+        : email.split("@")[0].toLowerCase(), // Use first part of email if no username provided
+      email,
+      password: hashedPass,
+    });
+
+    // 5. Save User and Generate Token:
+    const savedUser = await newUser.save();
+    const token = jwt.sign({ id: savedUser._id }, process.env.JWT_SECRET);
+    const { password: __, ...userResponse } = savedUser._doc; // Exclude password
+
+    // 6. Successful Response:
+    return res
+      .cookie("access_token", token, { httpOnly: true })
+      .status(201) // Created status code for new users
+      .json(userResponse);
+  } catch (error) {
+    console.error(error); // Log error for debugging
+    next(error); // Pass error to next middleware for handling
+  }
+};
+ 
+export const fetchUserbyCookie = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select("-password"); 
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ message: "Server error",error });
+  }
+};
+
+export const signOut= async (req,res)=>{
+  res.clearCookie('access_token'); 
+  res.status(200).json({ message: 'Logout successful' });
+} 

@@ -1,127 +1,130 @@
 // import React from "react";
 import { useForm } from "react-hook-form";
-// import { useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-// import { Iuser } from "../../interfaces/user.interface"; 
+// import { Iuser } from "../../interfaces/user.interface";
 
-// import {
-//   getDownloadURL,
-//   getStorage,
-//   ref,
-//   uploadBytesResumable,
-// } from "firebase/storage";
+import {
+  getDownloadURL,
+  getStorage,
+  ref,
+  uploadBytesResumable,
+} from "firebase/storage";
+import { errorhandler } from "../../utils";
+import { RootState } from "../../app/store";
 // import errorhandler from "../utils";
 
 function CreateListing() {
   const { register, handleSubmit } = useForm();
-//   const { CurrentUser } = useSelector((state:Iuser) => state.user);
+  const { loggedInUser } = useSelector((state: RootState) => state.auth);
 
-  // const [files, setFiles] = useState<File[]>([]);
+  const [files, setFiles] = useState<File[]>([]);
   const [ImageUrls, setImageUrls] = useState<string[]>([]);
 
   const [uploading, setUploading] = useState(false);
   const [offer, setOffer] = useState(false);
   const [error, setError] = useState<string>();
 
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
 
-  // const handleFileChange = (e: React.FormEvent<HTMLInputElement>) => {
-  //   const filez = Array.from(e.target.files);
-  //   setFiles(filez);
-  // };
+  const handleFileChange = (e: React.FormEvent<HTMLInputElement>) => {
+    const filez = Array.from(e.target.files as File[]);
+    setFiles(filez);
+  };
 
-  // const handelImageSubmit = async () => {
-  //   setUploading(true);
-  //   if (files.length > 0 && files.length + ImageUrls.length < 7) {
-  //     try {
-  //       const urls:string[] = await Promise.all(files.map(storeImage));
-  //       setImageUrls((prevUrls) => [...prevUrls, ...urls]);
-  //       console.log(ImageUrls);
-  //     } catch (error) {
-  //       console.error("Error while uploading images:", error);
-  //     }
-  //   } else {
-  //     console.error("Error: Invalid file count");
-  //   }
-  //   setUploading(false);
-  // };
+  const handelImageSubmit = async () => {
+    setUploading(true);
+    if (files.length > 0 && files.length + ImageUrls.length < 7) {
+      try {
+        const urls: string[] = (await Promise.all(
+          files.map(storeImage)
+        )) as string[];
+        setImageUrls((prevUrls) => [...prevUrls, ...urls]);
+        console.log(ImageUrls);
+      } catch (error) {
+        console.error("Error while uploading images:", error);
+      }
+    } else {
+      console.error("Error: Invalid file count");
+    }
+    setUploading(false);
+  };
 
-  // const storeImage = async (file:File) => {
-  //   return new Promise((resolve, reject) => {
-  //     const storage = getStorage();
-  //     const fileName = new Date().getTime() + file.name;
-  //     const storageRef = ref(storage, fileName);
-  //     const uploadTask = uploadBytesResumable(storageRef, file);
+  const storeImage = async (file: File) => {
+    return new Promise((resolve, reject) => {
+      const storage = getStorage();
+      const fileName = new Date().getTime() + file.name;
+      const storageRef = ref(storage, fileName);
+      const uploadTask = uploadBytesResumable(storageRef, file);
 
-  //     uploadTask.on(
-  //       "state_changed",
-  //       (snapshot) => {
-  //         const progress =
-  //           (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-  //         console.log("progress : ", progress);
-  //       },
-  //       (error) => {
-  //         reject(error);
-  //       },
-  //       () => {
-  //         getDownloadURL(uploadTask.snapshot.ref)
-  //           .then((downloadURL) => {
-  //             resolve(downloadURL);
-  //             console.log(downloadURL);
-  //           })
-  //           .catch((error) => {
-  //             reject(error);
-  //           });
-  //       }
-  //     );
-  //   });
-  // };
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          const progress =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          console.log("progress : ", progress);
+        },
+        (error) => {
+          reject(error);
+        },
+        () => {
+          getDownloadURL(uploadTask.snapshot.ref)
+            .then((downloadURL) => {
+              resolve(downloadURL);
+              console.log(downloadURL);
+            })
+            .catch((error) => {
+              reject(error);
+            });
+        }
+      );
+    });
+  };
 
-  // const onSubmit = async (data, event) => {
-  //   // event.preventDefault(); // Don;t need it when using useform hook.
-  //   try {
-  //     if (ImageUrls.length < 1)
-  //       return (
-  //         errorhandler(401, "You should upload at leat one image"),
-  //         setError("You should upload at leat one image")
-  //       );
+  const onSubmit = async (data: any) => {
+    try {
+      if (ImageUrls.length < 1)
+        return (
+          errorhandler(401, "You should upload at leat one image"),
+          setError("You should upload at leat one image")
+        );
 
-  //     // This is for not taking filelist from input as it is. If not takem it will be filelist instead of updated urlstring here data is destructured as inmageurl and rest of what we want.
-  //     const { imageUrls, regularPrice, discountedPrice, ...rest } = data;
-  //     if (discountedPrice > regularPrice) {
-  //       return (
-  //         errorhandler(
-  //           401,
-  //           "Regular Price should be more than discounted Price"
-  //         ),
-  //         setError("Regular Price should be more than discounted Price")
-  //       );
-  //     }
-  //     const mahiti = {
-  //       userRef: CurrentUser._id,
-  //       imageUrls: ImageUrls,
-  //       regularPrice: regularPrice,
-  //       discountedPrice,
-  //       ...rest,
-  //     };
-  //     console.log(mahiti);
-  //     const res = await fetch(`/api/listing/create`, {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify(mahiti),
-  //     });
-  //     const doc = await res.json();
-  //     console.log(doc);
-  //     navigate(`/your-listing/${doc._id}`);
-  //   } catch (err) {
-  //     console.log(err);
-  //   }
-  // };
+      // This is for not taking filelist from input as it is. If not takem it will be filelist instead of updated urlstring here data is destructured as inmageurl and rest of what we want.
+      const { imageUrls, regularPrice, discountedPrice, ...rest } = data;
+      if (discountedPrice > regularPrice) {
+        return (
+          errorhandler(
+            401,
+            "Regular Price should be more than discounted Price"
+          ),
+          setError("Regular Price should be more than discounted Price")
+        );
+      }
+      const mahiti = {
+        userRef: loggedInUser?._id,
+        imageUrls: ImageUrls,
+        regularPrice: regularPrice,
+        discountedPrice,
+        ...rest,
+      };
+      console.log(mahiti);
+      const res = await fetch(`/api/listing/create`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(mahiti),
+      });
+      const doc = await res.json();
+      console.log(doc);
+      navigate(`/your-listing/${doc._id}`);
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
-  const handleRemoveImage = (index:number) => {
+  const handleRemoveImage = (index: number) => {
     setImageUrls(ImageUrls.filter((_, i) => i !== index));
 
     console.log(ImageUrls);
@@ -132,9 +135,9 @@ function CreateListing() {
       <form
         className="bg-white px-5 py-12 mt-12"
         noValidate
-        // onSubmit={(event) => {
-        //   // handleSubmit(onSubmit)(event);
-        // }}
+        onSubmit={(event) => {
+          handleSubmit(onSubmit)(event);
+        }}
       >
         <div className="space-y-12">
           <div className="border-b border-gray-900/10 pb-12">
@@ -203,14 +206,14 @@ function CreateListing() {
                     type="file"
                     id="images"
                     accept="image/*"
-                    // onInput={(e) => handleFileChange(e)}
+                    onInput={(e) => handleFileChange(e)}
                     {...register("imageUrls", { required: true })}
                     multiple
                   />
                   <button
                     type="button"
                     disabled={uploading}
-                    // onClick={handelImageSubmit}
+                    onClick={handelImageSubmit}
                     className="p-3 border-green-700 border text-green-700 rounded-md hover:shadow-lg mt-3 sm:mt-0"
                   >
                     {uploading === true ? `UPLOADING` : `UPLOAD`}

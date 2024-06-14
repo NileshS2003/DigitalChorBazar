@@ -8,6 +8,9 @@ export interface IUser {
   pfp?: string;
   listings?: string[];
   purchases?: string[];
+  college?:string
+  city?:string
+  state?:string
 }
 
 export interface IUserData {
@@ -18,6 +21,6 @@ export interface IUserData {
 
 export interface IUserResponse {
   _id: string;
-  name: string;
+  username: string;
   email: string;
 }

@@ -7,8 +7,11 @@ const userSchema = new mongoose.Schema({
   password: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   pfp: { type: String },
-  listings: [{ type: Schema.Types.ObjectId, ref: 'Listing' }],
-  purchases: [{ type: Schema.Types.ObjectId, ref: 'Listing' }],
+  listings: [{ type: Schema.Types.ObjectId, ref: "Listing" }],
+  purchases: [{ type: Schema.Types.ObjectId, ref: "Listing" }],
+  college: { type: String },
+  city: { type: String },
+  state: { type: String },
 });
 
 const User = mongoose.model("User", userSchema);

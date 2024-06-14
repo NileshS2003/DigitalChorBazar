@@ -7,7 +7,7 @@ import cors from "cors";
 import authRouter from "./routes/auth.route.js";
 import listingRouter from "./routes/listing.route.js";
 
-dotenv.config();
+dotenv.config(); 
 const app = express();
 const port = process.env.PORT || 3000;
 

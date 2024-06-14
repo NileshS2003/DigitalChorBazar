@@ -1,13 +1,24 @@
-// import React from "react";
-// import { FaSearch } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 import { FaSearch } from "react-icons/fa";
+import { useSelector } from "react-redux";
+import { RootState, useAppDispatch } from "../app/store";
+import ProfilePage from "../pages/ProfilePage";
+import { SignOutUserAsync, fetchUserAsync } from "../features/Auth/authSlice";
+import { useEffect } from "react";
 
 function Header() {
+  const user = useSelector((state: RootState) => state.auth.loggedInUser);
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    dispatch(fetchUserAsync());
+  }, [dispatch]);
+
   return (
     <div className="w-full">
       <nav className="max-w-6xl p-3 sticky-top flex justify-around border-gray-200 px-4 lg:px-6 py-2.5 dark:bg-gray-800  flex-wrap items-center mx-auto ">
-        <a href="https://flowbite.com" className="flex items-center">
+        <a href="/" className="flex items-center">
           <img
             src="https://flowbite.com/docs/images/logo.svg"
             className="mr-3 h-6 sm:h-9"
@@ -23,31 +34,30 @@ function Header() {
         >
           <ul className="flex flex-col mt-4 ml-3 font-medium lg:flex-row lg:space-x-8 lg:mt-0">
             <li>
-              <a
-                href="#"
+              <Link
+                to="/"
                 className="block py-2 pr-4 pl-3 rounded bg-primary-700 lg:bg-transparent lg:text-text-[#80ED99] lg:p-0 dark:text-white"
                 aria-current="page"
               >
                 Home
-              </a>
+              </Link>
             </li>
 
             <li>
-              <a
-                href="#"
+              <Link
+                to={`/contact`}
                 className="block py-2 pr-4 pl-3 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:p-0 dark:text-gray-400 lg:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white lg:dark:hover:bg-transparent dark:border-gray-700"
               >
                 Contact
-              </a>
+              </Link>
             </li>
             <li>
-              <a
-                href="#"
+              <Link
+                to={`/create-listing`}
                 className="block py-2 pr-4 pl-3 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0  lg:p-0 dark:text-gray-400 lg:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white lg:dark:hover:bg-transparent dark:border-gray-700"
               >
                 Sell Stuff
-              </a>
-              
+              </Link>
             </li>
           </ul>
           <div className="pt-2 relative mx-auto text-gray-600 ml-5 mr-0">
@@ -62,21 +72,37 @@ function Header() {
             </button>
           </div>
         </div>
-        
+
         <div className="flex items-center lg:order-2">
-          <a
-            href="#"
-            className="dark:text-white hover:bg-gray-50 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 dark:hover:bg-gray-700 focus:outline-none dark:focus:ring-gray-800"
-          >
-            Log in
-          </a>
-          <a
-            href="#"
-            className="bg-dwitiy hover:bg-pratham focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800"
-          >
-            Get started
-          </a>
-          
+          {user ? (
+            <div className="flex justify-around gap-2 w-full md:gap-3 items-center">
+              <Link to={`/profile`}>
+                <ProfilePage />
+              </Link>
+              <button
+                className="bg-dwitiy hover:bg-pratham focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800"
+                onClick={() => dispatch(SignOutUserAsync())}
+              >
+                Sign Out
+              </button>
+            </div>
+          ) : (
+            <>
+              <Link
+                to={`/sign-in`}
+                className="dark:text-white hover:bg-gray-50 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 dark:hover:bg-gray-700 focus:outline-none dark:focus:ring-gray-800"
+              >
+                Log in
+              </Link>
+              <Link
+                to={`sign-up`}
+                className="bg-dwitiy hover:bg-pratham focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800"
+              >
+                Get started
+              </Link>
+            </>
+          )}
+
           <button
             data-collapse-toggle="mobile-menu-2"
             type="button"
