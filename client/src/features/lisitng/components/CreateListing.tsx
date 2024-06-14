@@ -11,8 +11,9 @@ import {
   ref,
   uploadBytesResumable,
 } from "firebase/storage";
-import { errorhandler } from "../../utils";
-import { RootState } from "../../app/store";
+import { errorhandler } from "../../../utils";
+import { RootState, useAppDispatch } from "../../../app/store";
+import { createListingAsync } from "../listingSlice";
 
 function CreateListing() {
   const { register, handleSubmit } = useForm();
@@ -25,6 +26,7 @@ function CreateListing() {
   const [error, setError] = useState<string>();
 
   const navigate = useNavigate();
+  const dispatch=useAppDispatch()
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -90,32 +92,16 @@ function CreateListing() {
           setError("You should upload at leat one image")
         );
 
-      // This is for not taking filelist from input as it is. If not takem it will be filelist instead of updated urlstring here data is destructured as inmageurl and rest of what we want.
+      // This is for not taking filelist from input as it is. If not takem it will be filelist instead of updated urlstring here data is destructured as inmageurl and rest of what we want.This thing down here that is..
+
       const { imageUrls,  ...rest } = data;
-      // title: { type: String, required: true },
-      // description: { type: String, required: true },
-      // price: { type: Number, required: true },
-      // type: { type: String, required: true },
-      // photos: { type: [String], required: true },
-      // used_time: { type: String, required: true },
-      // isNegotialble: { type: Boolean, required: true },
-      // seller_Id: { type: Schema.Types.ObjectId, ref: "User", required: true },
-      // sold: { type: Boolean, default: false },
       const mahiti = {
         seller_Id: loggedInUser?._id,
         photos: ImageUrls,
         ...rest,
       };
-      console.log(mahiti);
-      const res = await fetch(`/api/listing/create`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(mahiti),
-      });
-      const doc = await res.json();
-      console.log(doc);
+      const result =await dispatch(createListingAsync(mahiti))
+      console.log(result.payload)
       // navigate(`/your-listing/${doc._id}`);
     } catch (err) {
       console.log(err);

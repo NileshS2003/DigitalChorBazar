@@ -1,10 +1,12 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { useDispatch } from "react-redux";
-import authReducer from '../features/Auth/authSlice'
+import authReducer from "../features/Auth/authSlice";
+import listingReducer from "../features/lisitng/listingSlice";
 
 const store = configureStore({
   reducer: {
-    auth : authReducer
+    auth: authReducer,
+    listing: listingReducer,
   },
   //   middleware: (getDefaultMiddleware) =>
   //     getDefaultMiddleware()

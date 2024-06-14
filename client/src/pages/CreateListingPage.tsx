@@ -1,5 +1,5 @@
 
-import CreateListing from '../features/lisitng/CreateListing.tsx'
+import CreateListing from '../features/lisitng/components/CreateListing.tsx'
 
 function CreateListingPage() {
   return (

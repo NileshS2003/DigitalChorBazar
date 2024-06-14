@@ -31,3 +31,16 @@ export const createListing = async (req, res, next) => {
     next(error);
   }
 };
+
+export const getUserListings = async (req, res, next) => {
+  if (req.params.id === req.user.id) {
+    try {
+      const listings = await Listing.find({ seller_Id: req.user.id });
+      res.json(listings).status(200);
+    } catch (error) {
+      next(error);
+    }
+  } else {
+    next(401, "Cannot get your listings");
+  }
+};

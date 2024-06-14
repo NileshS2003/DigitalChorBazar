@@ -11,7 +11,7 @@ function Header() {
   const user = useSelector((state: RootState) => state.auth.loggedInUser);
   const dispatch = useAppDispatch();
 
-  useEffect(() => {
+  useEffect(() => { 
     dispatch(fetchUserAsync());
   }, [dispatch]);
 
