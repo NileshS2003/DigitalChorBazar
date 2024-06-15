@@ -21,7 +21,7 @@ export function createListing(listingData: IListingData) {
       }
     } catch (err) {
       reject({err: err as ErrorPayloadType});
-    }
+    } 
   });
 }
 //   const res = await fetch(`/api/listing/create`, {

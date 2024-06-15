@@ -1,5 +1,6 @@
 import Listing from "../model/Listing.model.js";
 import User from "../model/User.model.js";
+import { errorhandler } from "../utils/error.js";
 
 export const getAllListings = async (req, res) => {
   try {
@@ -21,7 +22,7 @@ export const createListing = async (req, res, next) => {
     // Add the new listing's ID to the user's listings array
     user.listings.push(listing.id);
 
-    // Save the updated user document 
+    // Save the updated user document
     await user.save();
 
     // Return the created listing
@@ -42,5 +43,25 @@ export const getUserListings = async (req, res, next) => {
     }
   } else {
     next(401, "Cannot get your listings");
+  }
+};
+
+export const deleteListing = async (req, res, next) => {
+  const listing = await Listing.findById(req.params.id);
+  if (!listing) return next(errorhandler(404, "listing Not found"));
+
+  /*************Checking if authenticated user is delting or not****************  */
+  const check1 = toString(listing.seller_Id);
+  const check2 = toString(req.user.id);
+  if (check2 !== check1) {
+    return next(errorhandler(401, `Not authorized to deletion`));
+  }
+
+  try {
+    const response = await Listing.findByIdAndDelete(req.params.id);
+    console.log(response);
+    res.status(200).json("Succesful deletion");
+  } catch (error) {
+    next(error);
   }
 };

@@ -48,7 +48,7 @@ const listingSlice = createSlice({
 
       })
       .addCase(createListingAsync.pending, (state) => {
-        state.loading = true;
+        state.loading = true; 
       });
   },
 });

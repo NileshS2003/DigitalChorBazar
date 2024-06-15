@@ -26,7 +26,7 @@ function CreateListing() {
   const [error, setError] = useState<string>();
 
   const navigate = useNavigate();
-  const dispatch=useAppDispatch()
+  const dispatch = useAppDispatch();
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -94,15 +94,15 @@ function CreateListing() {
 
       // This is for not taking filelist from input as it is. If not takem it will be filelist instead of updated urlstring here data is destructured as inmageurl and rest of what we want.This thing down here that is..
 
-      const { imageUrls,  ...rest } = data;
+      const { imageUrls, ...rest } = data;
       const mahiti = {
         seller_Id: loggedInUser?._id,
         photos: ImageUrls,
         ...rest,
       };
-      const result =await dispatch(createListingAsync(mahiti))
-      console.log(result.payload)
-      // navigate(`/your-listing/${doc._id}`);
+      const result = await dispatch(createListingAsync(mahiti));
+      console.log(result.payload);
+      navigate(`/listing`);
     } catch (err) {
       console.log(err);
     }
