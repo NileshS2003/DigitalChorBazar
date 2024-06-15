@@ -19,4 +19,3 @@ const ListingSchema = new mongoose.Schema(
 // Create and export the User model
 const Listing = mongoose.model("Listing", ListingSchema);
 export default Listing;
- 

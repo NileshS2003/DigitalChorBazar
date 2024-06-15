@@ -18,7 +18,7 @@ function Header() {
 
   return (
     <div className="w-full">
-      <nav className="max-w-6xl p-3 sticky-top flex justify-around border-gray-200 px-4 lg:px-6 py-2.5 dark:bg-gray-800  flex-wrap items-center mx-auto ">
+      <nav className="max-w-6xl p-3 sticky-top flex justify-around border-gray-200 px-4 lg:px-6 py-2.5 dark:bg-gray-800  flex-wrap items-center mx-auto">
         <a href="/" className="flex items-center">
           <img
             src="https://flowbite.com/docs/images/logo.svg"
@@ -46,7 +46,7 @@ function Header() {
 
             <li>
               <Link
-                to={`/contact`}
+                to={`/listing`}
                 className="block py-2 pr-4 pl-3 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:p-0 dark:text-gray-400 lg:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white lg:dark:hover:bg-transparent dark:border-gray-700"
               >
                 Contact

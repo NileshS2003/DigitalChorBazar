@@ -46,14 +46,34 @@ export const getUserListings = async (req, res, next) => {
   }
 };
 
+export const getListing = async (req, res, next) => {
+  try {
+    const listing = await Listing.findById(req.params.id);
+    if (listing) {
+      const userIdFromList = toString(listing.seller_Id);
+      const useridFromAuthToken = toString(req.user.id);
+
+      if (userIdFromList === useridFromAuthToken) {
+        res.json(listing).status(200);
+      } else {
+        next(401, "Not authorized");
+      }
+    } else {
+      next(404, "No listing");
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const deleteListing = async (req, res, next) => {
   const listing = await Listing.findById(req.params.id);
   if (!listing) return next(errorhandler(404, "listing Not found"));
 
   /*************Checking if authenticated user is delting or not****************  */
-  const check1 = toString(listing.seller_Id);
-  const check2 = toString(req.user.id);
-  if (check2 !== check1) {
+  const arg1 = toString(listing.seller_Id);
+  const arg2 = toString(req.user.id);
+  if (arg2 !== arg1) {
     return next(errorhandler(401, `Not authorized to deletion`));
   }
 
@@ -61,6 +81,26 @@ export const deleteListing = async (req, res, next) => {
     const response = await Listing.findByIdAndDelete(req.params.id);
     console.log(response);
     res.status(200).json("Succesful deletion");
+  } catch (error) {
+    next(error);
+  }
+};
+ 
+export const updateListing = async (req, res, next) => {
+  const listing = await Listing.findById(req.params.id);
+  if (!listing) return next(errorhandler(404, "listing Not found"));
+
+  /*************Checking if authenticated user is updatingk or not****************  */
+  const arg1 = toString(listing.seller_Id);
+  const arg2 = toString(req.user.id);
+  if (arg2 !== arg1) {
+    return next(errorhandler(401, `Not authorized to deletion`));
+  }
+
+  try {
+    const response = await Listing.findByIdAndUpdate(req.params.id,req.body);
+    console.log(response);
+    res.status(200).json(response);
   } catch (error) {
     next(error);
   }

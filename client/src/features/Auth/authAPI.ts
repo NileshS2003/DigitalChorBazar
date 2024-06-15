@@ -81,7 +81,7 @@ export function fetchUser() {
         reject({ errorData });
       } else {
         const data = await response.json();
-        console.log(data);
+        // console.log(data);
         resolve(data);
       }
     } catch (error) {

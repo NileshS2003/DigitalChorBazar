@@ -15,9 +15,9 @@ export interface IListing {
   description: string;
   price: string;
   type: string;
-  photos: string;
+  photos: string[];
   used_time: string;
-  isNegotialble: string;
+  isNegotialble: boolean;
   seller_Id: string;
   sold: string;
   createdAt: string;

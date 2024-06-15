@@ -1,38 +1,55 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { Link} from "react-router-dom";
-import { RootState, useAppDispatch } from "../../../app/store";
+import { Link, useNavigate } from "react-router-dom";
+import { RootState } from "../../../app/store";
 import { IUser } from "../../../interfaces/user.interface";
 import { IListing } from "../../../interfaces/listing.interface";
-import { deleteUserListingAsync, getUserListingAsync } from "../listingSlice";
 
 function Listings() {
   const { loggedInUser } = useSelector((state: RootState) => state.auth);
   const [data, setData] = useState<IListing[] | null>(null);
-  // const navigate = useNavigate();
-  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res=await dispatch(getUserListingAsync((loggedInUser as IUser)._id));
-        setData(res.payload as IListing[])
+        const res = await fetch(`/api/listing/${(loggedInUser as IUser)._id}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (res.ok) {
+          // Parse the JSON response
+          const doc = await res.json();
+          console.log(doc);
+          // Update the state with the fetched data
+          setData(doc);
+        } else {
+          // Handle errors if the response is not successful
+          console.error("Failed to fetch data:", res.status);
+        }
       } catch (error) {
-        // if (loggedInUser === null) return navigate("/");
-        console.log(error);
+        // Handle network errors or other exceptions
+        console.error("Error fetching data:", error);
       }
-    }
-    console.log(loggedInUser)
-    fetchData()
-  }, [loggedInUser,dispatch]); // Empty dependency array means this effect runs only once when the component mounts
+    };
+    if (typeof loggedInUser == null) navigate("/sign-in");
+    fetchData();
+  }, [loggedInUser]); // Empty dependency array means this effect runs only once when the component mounts
 
   const handleDelete = async (index: number) => {
     const listings = data as IListing[];
-    const res= await dispatch(deleteUserListingAsync(listings[index]._id))
-
-    if(res.type=="listing/delete/fulfilled" && typeof data!==null)
-      setData((prev)=>(prev as IListing[]).filter((_,i)=>index!=i))
-    console.log(res)
+    const res = await fetch(`/api/listing/${listings[index]._id}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const console_data=res.json()
+    console.log(console_data);
+    setData(listings.filter((_, i) => i !== index));
   };
 
   return (
@@ -49,7 +66,7 @@ function Listings() {
                   <img
                     src={list.photos[0]}
                     alt="card-image"
-                    className=" w-full max-w-[25rem] my-2 h-full max-h-[20rem] object-contain"
+                    className=" w-full max-w-[25rem] h-full max-h-[20rem] object-contain"
                   />
                 </Link>
               </div>
