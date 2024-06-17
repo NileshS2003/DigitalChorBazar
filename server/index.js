@@ -6,6 +6,7 @@ import cors from "cors";
 
 import authRouter from "./routes/auth.route.js";
 import listingRouter from "./routes/listing.route.js";
+import userRouter from "./routes/user.route.js"
 
 dotenv.config(); 
 const app = express();
@@ -22,6 +23,7 @@ app.use((req, res, next) => {
 
 app.use("/api/auth", authRouter); 
 app.use("/api/listing", listingRouter);
+app.use("/api/user", userRouter);
 
 
 /* To send brower defined errors  */

@@ -156,7 +156,7 @@ function EditListing() {
   };
 
   return (
-    <div className="mx-8">
+    <div className="mx-8 bg-gray-100">
       <form
         className="bg-white px-5 py-12 mt-12"
         noValidate

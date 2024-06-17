@@ -10,8 +10,9 @@ import { useAppDispatch } from "./app/store.ts";
 import { useEffect } from "react";
 import { fetchUserAsync } from "./features/Auth/authSlice.ts";
 import Listings from "./features/lisitng/components/Listings.tsx";
-import Profile from "./pages/Profile.tsx";
 import EditListingPage from "./pages/EditListingPage.tsx";
+import ProfilePage from "./pages/ProfilePage.tsx";
+import ContactPage from "./pages/ContactPage.tsx";
 // import PrivateRoute from "./components/PrivateRoute.tsx";
 
 function App() {
@@ -28,9 +29,10 @@ function App() {
         <Route path="/sign-in" element={<SignInPage />} />
         <Route path="/sign-up" element={<SignUpPage />} />
         <Route path="/about" element={<About />} />
+        <Route path="/contact" element={<ContactPage/>}/>
         {/* <Route element={<PrivateRoute />}> */}
-        <Route path="/listing" element={<Listings/>}/>
-        <Route path="/profile" element={<Profile/>}/>
+        <Route path="/listing" element={<Listings />} />
+        <Route path="/profile" element={<ProfilePage />} />
         <Route path="/create-listing" element={<CreateListingPage />} />
         <Route path="/edit-listing/:id" element={<EditListingPage />} />
         {/* </Route> */}

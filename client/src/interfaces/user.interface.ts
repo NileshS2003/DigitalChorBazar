@@ -9,18 +9,12 @@ export interface IUser {
   listings?: string[];
   purchases?: string[];
   college?:string
-  city?:string
+  city?:string 
   state?:string
 }
 
 export interface IUserData {
   username?: string;
   password: string;
-  email: string;
-}
-
-export interface IUserResponse {
-  _id: string;
-  username: string;
   email: string;
 }

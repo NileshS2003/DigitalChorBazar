@@ -6,7 +6,7 @@ import listingReducer from "../features/lisitng/listingSlice";
 const store = configureStore({
   reducer: {
     auth: authReducer,
-    listing: listingReducer,
+    listing: listingReducer, 
   },
   //   middleware: (getDefaultMiddleware) =>
   //     getDefaultMiddleware()

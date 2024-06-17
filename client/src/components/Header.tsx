@@ -1,23 +1,21 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 import { FaSearch } from "react-icons/fa";
 import { useSelector } from "react-redux";
 import { RootState, useAppDispatch } from "../app/store";
-import ProfilePage from "../pages/ProfilePage";
-import { SignOutUserAsync, fetchUserAsync } from "../features/Auth/authSlice";
+import { fetchUserAsync } from "../features/Auth/authSlice";
 import { useEffect } from "react";
 
 function Header() {
   const user = useSelector((state: RootState) => state.auth.loggedInUser);
   const dispatch = useAppDispatch();
-  const navigate = useNavigate();
 
   useEffect(() => {
     dispatch(fetchUserAsync());
   }, [dispatch]);
 
   return (
-    <div className="w-full">
+    <div className="w-full bg-blue-100">
       <nav className="max-w-6xl p-3 sticky-top flex justify-around border-gray-200 px-4 lg:px-6 py-2.5 dark:bg-gray-800  flex-wrap items-center mx-auto">
         <a href="/" className="flex items-center">
           <img
@@ -26,7 +24,7 @@ function Header() {
             alt="Flowbite Logo"
           />
           <span className="self-center text-xl font-semibold whitespace-nowrap dark:text-white">
-            Flowbite
+            College<span className="font-normal">Bazaar</span>
           </span>
         </a>
         <div
@@ -46,7 +44,7 @@ function Header() {
 
             <li>
               <Link
-                to={`/listing`}
+                to={`/contact`}
                 className="block py-2 pr-4 pl-3 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:p-0 dark:text-gray-400 lg:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white lg:dark:hover:bg-transparent dark:border-gray-700"
               >
                 Contact
@@ -78,17 +76,8 @@ function Header() {
           {user ? (
             <div className="flex justify-around gap-2 w-full md:gap-3 items-center">
               <Link to={`/profile`}>
-                <ProfilePage />
+                <img src={user.pfp || "/images/pfpdummy.jpg"} alt="" className="w-[40px] h-[40px] rounded-full"/>
               </Link>
-              <button
-                className="bg-dwitiy hover:bg-pratham focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800"
-                onClick={() => {
-                  dispatch(SignOutUserAsync());
-                  navigate("/sign-in");
-                }}
-              >
-                Sign Out
-              </button>
             </div>
           ) : (
             <>
