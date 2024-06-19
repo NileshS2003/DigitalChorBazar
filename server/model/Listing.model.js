@@ -9,7 +9,7 @@ const ListingSchema = new mongoose.Schema(
     type: { type: String, required: true },
     photos: { type: [String], required: true },
     used_time: { type: String, required: true },
-    isNegotialble: { type: Boolean, required: true },
+    isNegotiable: { type: Boolean, required: true },
     seller_Id: { type: Schema.Types.ObjectId, ref: "User", required: true },
     sold: { type: Boolean, default: false },
   },

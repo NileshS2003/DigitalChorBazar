@@ -85,7 +85,7 @@ export const deleteListing = async (req, res, next) => {
     next(error);
   }
 };
- 
+
 export const updateListing = async (req, res, next) => {
   const listing = await Listing.findById(req.params.id);
   if (!listing) return next(errorhandler(404, "listing Not found"));
@@ -98,9 +98,94 @@ export const updateListing = async (req, res, next) => {
   }
 
   try {
-    const response = await Listing.findByIdAndUpdate(req.params.id,req.body);
+    const response = await Listing.findByIdAndUpdate(req.params.id, req.body);
     console.log(response);
     res.status(200).json(response);
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getAllTypes = async () => {
+  try {
+    // Fetch all distinct type values from the Listing collection
+    const types = await Listing.distinct("type");
+    return types;
+  } catch (error) {
+    console.error("Error fetching types:", error);
+    throw error;
+  }
+};
+
+const getAllColleges = async () => {
+  try {
+    // Fetch all distinct type values from the Listing collection
+    const types = await Listing.distinct("college");
+    return types;
+  } catch (error) {
+    console.error("Error fetching types:", error);
+    throw error;
+  }
+};
+
+export const getAllTypesFront = async (req, res, next) => {
+  try {
+    // Fetch all distinct type values from the Listing collection
+    const types = await Listing.distinct("type");
+    res.status(200).json(types);
+  } catch (error) {
+    console.error("Error fetching types:", error);
+    next(error);
+  }
+};
+
+export const getListingsWithQuery = async (req, res, next) => {
+  try {
+    const limit = parseInt(req.query.limit) || 9;
+    const startIndex = parseInt(req.query.startIndex) || 0;
+    let isNegotiable = req.query.isNegotiable;
+
+    if (isNegotiable === undefined || isNegotiable === "false") {
+      isNegotiable = { $in: [false, true] };
+    }
+
+    let type = req.query.type;
+    console.log(type);
+
+    let isCollegeOnly = req.query.isCollegeOnly;
+
+    if (isCollegeOnly === undefined || "false") {
+      const collegeArray = await getAllColleges();
+      isCollegeOnly = { $in: collegeArray };
+    }
+
+    if (type === undefined || type === "all") {
+      try {
+        const typesArray = await getAllTypes();
+        type = { $in: typesArray }; // Dynamically set type to include all types
+      } catch (error) {
+        return next(error);
+      }
+    }
+
+    const searchTerm = req.query.searchTerm || "";
+
+    const sort = req.query.sort || "createdAt";
+
+    const order = req.query.order || "desc";
+
+    const listings = await Listing.find({
+      title: { $regex: searchTerm, $options: "i" },
+      isNegotiable,
+      type,
+      college: isCollegeOnly,
+    })
+      .sort({ [sort]: order })
+      .limit(limit)
+      .skip(startIndex);
+
+    return res.status(200).json(listings);
+    
   } catch (error) {
     next(error);
   }

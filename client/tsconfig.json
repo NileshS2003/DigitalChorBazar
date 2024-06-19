@@ -20,6 +20,6 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src"],
+  "include": ["src","node_modules/@headlessui/**/*","types"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

@@ -1,14 +1,33 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import { FaSearch } from "react-icons/fa";
 import { useSelector } from "react-redux";
 import { RootState, useAppDispatch } from "../app/store";
 import { fetchUserAsync } from "../features/Auth/authSlice";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 function Header() {
   const user = useSelector((state: RootState) => state.auth.loggedInUser);
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const urlParams = new URLSearchParams(window.location.search);
+    urlParams.set("searchTerm", searchTerm);
+    const searchQuery = urlParams.toString();
+    navigate(`/search?${searchQuery}`);
+  };
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const searchTermFromURL = urlParams.get("searchTerm");
+
+    if (searchTermFromURL) {
+      setSearchTerm(searchTermFromURL);
+    }
+  }, [window.location.search]);
 
   useEffect(() => {
     dispatch(fetchUserAsync());
@@ -59,24 +78,33 @@ function Header() {
               </Link>
             </li>
           </ul>
-          <div className="pt-2 relative mx-auto text-gray-600 ml-5 mr-0">
+          <form
+            className="pt-2 relative mx-auto text-gray-600 ml-5 mr-0"
+            onSubmit={(e) => handleSubmit(e)}
+          >
             <input
               className="border-2 border-gray-300 bg-white h-10 px-5 pr-16 rounded-lg  text-sm focus:outline-none"
               type="search"
               name="search"
               placeholder="Search"
+              onChange={(e) => setSearchTerm(e.target.value)}
+              defaultValue={searchTerm}
             />
             <button type="submit" className="absolute right-0 top-0 mt-5 mr-4">
               <FaSearch />
             </button>
-          </div>
+          </form>
         </div>
 
         <div className="flex items-center lg:order-2">
           {user ? (
             <div className="flex justify-around gap-2 w-full md:gap-3 items-center">
               <Link to={`/profile`}>
-                <img src={user.pfp || "/images/pfpdummy.jpg"} alt="" className="w-[40px] h-[40px] rounded-full"/>
+                <img
+                  src={user.pfp || "/images/pfpdummy.jpg"}
+                  alt=""
+                  className="w-[40px] h-[40px] rounded-full"
+                />
               </Link>
             </div>
           ) : (

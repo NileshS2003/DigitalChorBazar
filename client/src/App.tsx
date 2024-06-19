@@ -13,6 +13,7 @@ import Listings from "./features/lisitng/components/Listings.tsx";
 import EditListingPage from "./pages/EditListingPage.tsx";
 import ProfilePage from "./pages/ProfilePage.tsx";
 import ContactPage from "./pages/ContactPage.tsx";
+import Search from "./pages/Search.tsx";
 // import PrivateRoute from "./components/PrivateRoute.tsx";
 
 function App() {
@@ -30,6 +31,7 @@ function App() {
         <Route path="/sign-up" element={<SignUpPage />} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<ContactPage/>}/>
+        <Route path="/search" element={<Search />} />
         {/* <Route element={<PrivateRoute />}> */}
         <Route path="/listing" element={<Listings />} />
         <Route path="/profile" element={<ProfilePage />} />

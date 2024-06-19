@@ -24,7 +24,7 @@ function EditListing() {
       type: "",
       used_time: "",
       price: "",
-      isNegotialble: false,
+      isNegotiable: false,
     }
   });
   const { loggedInUser } = useSelector((state: RootState) => state.auth);
@@ -143,7 +143,7 @@ function EditListing() {
         setValue("type", data.type);
         setValue("used_time", data.used_time);
         setValue("price", data.price);
-        setValue("isNegotialble", data.isNegotialble);
+        setValue("isNegotiable", data.isNegotiable);
       }
     };
     fetchListing();
@@ -331,17 +331,17 @@ function EditListing() {
             <div className="relative flex gap-x-3 mt-3">
               <div className="flex h-6 items-center">
                 <input
-                  id="isNegotialble"
+                  id="isNegotiable"
                   // name="furnished"
-                  {...register("isNegotialble")}
-                  defaultChecked={listing?.isNegotialble}
+                  {...register("isNegotiable")}
+                  defaultChecked={listing?.isNegotiable}
                   type="checkbox"
                   className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
                 />
               </div>
               <div className="text-sm leading-6">
                 <label
-                  htmlFor="isNegotialble"
+                  htmlFor="isNegotiable"
                   className="font-medium text-gray-900"
                 >
                   Offers
