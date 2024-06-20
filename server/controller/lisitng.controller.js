@@ -2,12 +2,13 @@ import Listing from "../model/Listing.model.js";
 import User from "../model/User.model.js";
 import { errorhandler } from "../utils/error.js";
 
-export const getAllListings = async (req, res) => {
+export const getAllListings = async (req, res, next) => {
   try {
     const doc = await Listing.find({});
     res.status(200).json(doc);
   } catch (error) {
     console.log(error);
+    next(error);
   }
 };
 
@@ -185,7 +186,6 @@ export const getListingsWithQuery = async (req, res, next) => {
       .skip(startIndex);
 
     return res.status(200).json(listings);
-    
   } catch (error) {
     next(error);
   }

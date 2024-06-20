@@ -1,7 +1,7 @@
 export interface IListingData {
   title: string;
   description: string;
-  price: string;
+  price: number | string;
   type: string;
   photos: string;
   used_time: string;

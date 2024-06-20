@@ -5,8 +5,10 @@ import {
   createListing,
   deleteUserListing,
   editListing,
+  getAllListings,
   getUserListing,
 } from "./listingAPi";
+import { RootState } from "../../app/store";
 
 /********************It's a forced conversion kind of thing ************************* */
 
@@ -32,6 +34,21 @@ export const getUserListingAsync = createAsyncThunk<
 >("listing/get", async (userId, { rejectWithValue }) => {
   try {
     const response = await getUserListing(userId);
+    if (typeof response === "undefined")
+      return rejectWithValue({ message: "did not get the response" });
+    return response as IListing[];
+  } catch (error: any) {
+    return rejectWithValue({ message: error.message });
+  }
+});
+
+export const getAllListingsAsync = createAsyncThunk<
+  IListing[] | ErrorPayloadType,
+  void,
+  { rejectValue: ErrorPayloadType }
+>("listing/getAll", async (_, { rejectWithValue }) => {
+  try {
+    const response = await getAllListings();
     if (typeof response === "undefined")
       return rejectWithValue({ message: "did not get the response" });
     return response as IListing[];
@@ -116,6 +133,17 @@ const listingSlice = createSlice({
       .addCase(getUserListingAsync.pending, (state) => {
         state.loading = true;
       })
+      .addCase(getAllListingsAsync.fulfilled, (state, action) => {
+        state.loading = false;
+        state.listings = action.payload as IListing[];
+      })
+      .addCase(getAllListingsAsync.rejected, (state, action) => {
+        state.error = action.payload?.message ?? "Failed to create listing";
+        state.loading = false;
+      })
+      .addCase(getAllListingsAsync.pending, (state) => {
+        state.loading = true;
+      })
       .addCase(deleteUserListingAsync.fulfilled, (state, action) => {
         state.loading = false;
         const id = (action.payload as IListing)._id as string;
@@ -148,7 +176,7 @@ const listingSlice = createSlice({
   },
 });
 
-// export const selectLoggedInUser = (state: RootState) => state.auth.loggedInUser;
+export const selectListings = (state: RootState) => state.listing.listings;
 
 // export const selectError = (state: RootState) => state.auth.error;
 

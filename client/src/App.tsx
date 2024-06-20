@@ -14,6 +14,7 @@ import EditListingPage from "./pages/EditListingPage.tsx";
 import ProfilePage from "./pages/ProfilePage.tsx";
 import ContactPage from "./pages/ContactPage.tsx";
 import Search from "./pages/Search.tsx";
+// import { getAllListingsAsync } from "./features/lisitng/listingSlice.ts";
 // import PrivateRoute from "./components/PrivateRoute.tsx";
 
 function App() {
@@ -21,8 +22,11 @@ function App() {
 
   useEffect(() => {
     dispatch(fetchUserAsync());
+    // dispatch(getAllListingsAsync())
   }, [dispatch]);
+  
   return (
+    
     <BrowserRouter>
       {<Header />}
       <Routes>
