@@ -56,7 +56,7 @@ export default function Search() {
       setSidebardata({
         searchTerm: searchTermFromUrl || "",
         type: typeFromUrl || "all",
-        IsCollegeOnly: IsCollegeOnlyFromUrl === "true" ? true : false,
+        IsCollegeOnly: IsCollegeOnlyFromUrl !== "false" ? true : false,
         isNegotiable: isNegotiableFromUrl === "true" ? true : false,
         sort: sortFromUrl || "createdAt",
         order: orderFromUrl || "desc",
@@ -70,7 +70,7 @@ export default function Search() {
       console.log(searchQuery);
       const res = await fetch(`/api/listing/get?${searchQuery}`);
       const data = await res.json();
-      if (data.length > 8) {
+      if (data.length >= 9) {
         setShowMore(true);
       } else {
         setShowMore(false);
@@ -113,7 +113,9 @@ export default function Search() {
     urlParams.set("type", sidebardata.type);
     urlParams.set(
       "IsCollegeOnly",
-      sidebardata.IsCollegeOnly === true && loggedInUser ? loggedInUser.college as string : "false"
+      sidebardata.IsCollegeOnly === true && loggedInUser
+        ? (loggedInUser.college as string)
+        : "false"
     );
     // urlParams.set(
     //   "furnished",
@@ -302,7 +304,9 @@ export default function Search() {
                                     name="IsCollegeOnly"
                                     // {...register("IsCollegeOnly")}
                                     onChange={(e) => handleChange(e)}
-                                    defaultChecked={sidebardata.IsCollegeOnly}
+                                    defaultChecked={
+                                      sidebardata.IsCollegeOnly !== false
+                                    }
                                     type="checkbox"
                                     className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
                                   />
@@ -377,11 +381,11 @@ export default function Search() {
                                 id="sort_order"
                                 className="border rounded-lg p-3"
                               >
-                                <option value="regularPrice_desc">
+                                <option value="price_desc">
                                   Price high to low
                                 </option>
-                                <option value="regularPrice_asc">
-                                  Price low to hight
+                                <option value="price_asc">
+                                  Price low to high
                                 </option>
                                 <option value="createdAt_desc">Latest</option>
                                 <option value="createdAt_asc">Oldest</option>
@@ -531,7 +535,9 @@ export default function Search() {
                                 id="IsCollegeOnly"
                                 name="IsCollegeOnly"
                                 onChange={(e) => handleChange(e)}
-                                defaultChecked={sidebardata.IsCollegeOnly}
+                                defaultChecked={
+                                  sidebardata.IsCollegeOnly !== false
+                                }
                                 type="checkbox"
                                 className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
                               />
@@ -605,12 +611,10 @@ export default function Search() {
                             id="sort_order"
                             className="border rounded-lg p-3"
                           >
-                            <option value="regularPrice_desc">
+                            <option value="price_desc">
                               Price high to low
                             </option>
-                            <option value="regularPrice_asc">
-                              Price low to hight
-                            </option>
+                            <option value="price_asc">Price low to high</option>
                             <option value="createdAt_desc">Latest</option>
                             <option value="createdAt_asc">Oldest</option>
                           </select>
@@ -645,7 +649,7 @@ export default function Search() {
         {showMore && (
           <button
             onClick={onShowMoreClick}
-            className="text-green-700 hover:underline p-7 text-center text-2xl w-full"
+            className="text-green-700 hover:underline px-7 mt-3 text-center text-2xl w-full"
           >
             Show more
           </button>

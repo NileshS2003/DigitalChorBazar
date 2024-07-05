@@ -4,7 +4,7 @@ import { errorhandler } from "../utils/error.js";
 
 export const getAllListings = async (req, res, next) => {
   try {
-    const doc = await Listing.find({});
+    const doc = await Listing.find({ sold: false });
     res.status(200).json(doc);
   } catch (error) {
     console.log(error);
@@ -37,7 +37,10 @@ export const createListing = async (req, res, next) => {
 export const getUserListings = async (req, res, next) => {
   if (req.params.id === req.user.id) {
     try {
-      const listings = await Listing.find({ seller_Id: req.user.id });
+      const listings = await Listing.find({
+        seller_Id: req.user.id,
+        sold: false,
+      });
       res.json(listings).status(200);
     } catch (error) {
       next(error);
@@ -49,7 +52,8 @@ export const getUserListings = async (req, res, next) => {
 
 export const getListing = async (req, res, next) => {
   try {
-    const listing = await Listing.findById(req.params.id);
+    const listing = await Listing.findById(req.params.id).populate("seller_Id");
+    // const listing = await Listing.findById(req.params.id)
     if (listing) {
       const userIdFromList = toString(listing.seller_Id);
       const useridFromAuthToken = toString(req.user.id);
@@ -80,7 +84,6 @@ export const deleteListing = async (req, res, next) => {
 
   try {
     const response = await Listing.findByIdAndDelete(req.params.id);
-    console.log(response);
     res.status(200).json("Succesful deletion");
   } catch (error) {
     next(error);
@@ -100,7 +103,6 @@ export const updateListing = async (req, res, next) => {
 
   try {
     const response = await Listing.findByIdAndUpdate(req.params.id, req.body);
-    console.log(response);
     res.status(200).json(response);
   } catch (error) {
     next(error);
@@ -153,9 +155,10 @@ export const getListingsWithQuery = async (req, res, next) => {
     let type = req.query.type;
     console.log(type);
 
-    let isCollegeOnly = req.query.isCollegeOnly;
+    let isCollegeOnly = req.query.IsCollegeOnly;
+    console.log(isCollegeOnly);
 
-    if (isCollegeOnly === undefined || "false") {
+    if (isCollegeOnly === undefined || isCollegeOnly === "false") {
       const collegeArray = await getAllColleges();
       isCollegeOnly = { $in: collegeArray };
     }
@@ -180,6 +183,7 @@ export const getListingsWithQuery = async (req, res, next) => {
       isNegotiable,
       type,
       college: isCollegeOnly,
+      sold: false,
     })
       .sort({ [sort]: order })
       .limit(limit)

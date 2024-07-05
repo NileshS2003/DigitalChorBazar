@@ -17,10 +17,15 @@ function OAuth() {
       const result = await signInWithPopup(auth, provider);
       console.log(result.user);
 
-      const { email, displayName }=
-        result.user;
+      const { email, displayName, photoURL } = result.user;
 
-      dispatch(SignInWithGoogleAsync({ email:email as string, username:displayName as string}));
+      dispatch(
+        SignInWithGoogleAsync({
+          email: email as string,
+          username: displayName as string,
+          pfp : photoURL as string
+        })
+      );
       navigate("/");
     } catch (error) {
       console.log("cannot sign in with google", error);

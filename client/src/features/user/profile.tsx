@@ -13,7 +13,6 @@ function Profile() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-
   const [editProfile, setEditProfile] = useState(false);
 
   const onSubmit = async (data: any) => {
@@ -235,7 +234,7 @@ function Profile() {
                 </div>
               )
             )}
-            {!editProfile && 
+            {!editProfile && (
               <button
                 type="button"
                 onClick={() => setEditProfile((prev) => !prev)}
@@ -243,24 +242,24 @@ function Profile() {
               >
                 Edit Info
               </button>
-            }
-              <Link
-              to={'/listing'}
-                type="button"
-                className="text-white bg-dwitiy hover:bg-pratham focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm  sm:w-1/5 px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 mt-3"
-              >
-                Show Listings
-              </Link>
-              <button
-                type="button"
-                className="text-white bg-red-500 hover:bg-red-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm  sm:w-1/5 px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 my-3"
-                onClick={() => {
-                  dispatch(SignOutUserAsync());
-                  navigate("/sign-in");
-                }}
-              >
-                Sign Out
-              </button>
+            )}
+            <Link
+              to={"/listing"}
+              type="button"
+              className="text-white bg-dwitiy hover:bg-pratham focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm  sm:w-1/5 px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 mt-3"
+            >
+              Show Listings
+            </Link>
+            <button
+              type="button"
+              className="text-white bg-red-500 hover:bg-red-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm  sm:w-1/5 px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 my-3"
+              onClick={() => {
+                dispatch(SignOutUserAsync());
+                navigate("/sign-in");
+              }}
+            >
+              Sign Out
+            </button>
             {/* <div className="lg:w-[70%] md:h-[14rem] xs:w-full xs:h-[10rem] my-10">
               <h1 className="w-fit font-serif my-4 pb-1 pr-2 rounded-b-md border-b-4 border-blue-600 dark:border-b-4 dark:border-yellow-600 dark:text-white lg:text-4xl md:text-3xl xs:text-xl">
                 My Location

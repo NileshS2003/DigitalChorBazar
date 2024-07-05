@@ -1,44 +1,66 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { Link} from "react-router-dom";
+import { Link } from "react-router-dom";
 import { RootState, useAppDispatch } from "../../../app/store";
 import { IUser } from "../../../interfaces/user.interface";
 import { IListing } from "../../../interfaces/listing.interface";
-import { deleteUserListingAsync, getUserListingAsync } from "../listingSlice";
+import {
+  deleteUserListingAsync,
+  editListingAsync,
+  getUserListingAsync,
+} from "../listingSlice";
 
 function Listings() {
   const { loggedInUser } = useSelector((state: RootState) => state.auth);
-  const [data, setData] = useState<IListing[] | null>(null);
+  const [listings, setlistings] = useState<IListing[] | null>(null);
   // const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchlistings = async () => {
       try {
-        const res=await dispatch(getUserListingAsync((loggedInUser as IUser)._id));
-        setData(res.payload as IListing[])
+        const res = await dispatch(
+          getUserListingAsync((loggedInUser as IUser)._id)
+        );
+        setlistings(res.payload as IListing[]);
       } catch (error) {
         // if (loggedInUser === null) return navigate("/");
         console.log(error);
       }
-    }
-    console.log(loggedInUser)
-    fetchData()
-  }, [loggedInUser,dispatch]); // Empty dependency array means this effect runs only once when the component mounts
+    };
+    console.log(loggedInUser);
+    fetchlistings();
+  }, [loggedInUser, dispatch]); // Empty dependency array means this effect runs only once when the component mounts
 
   const handleDelete = async (index: number) => {
-    const listings = data as IListing[];
-    const res= await dispatch(deleteUserListingAsync(listings[index]._id))
+    const listingsArr = listings as IListing[];
+    const res = await dispatch(deleteUserListingAsync(listingsArr[index]._id));
 
-    if(res.type=="listing/delete/fulfilled" && typeof data!==null)
-      setData((prev)=>(prev as IListing[]).filter((_,i)=>index!=i))
-    console.log(res)
+    if (res.type == "listing/delete/fulfilled" && typeof listingsArr !== null)
+      setlistings((prev) => (prev as IListing[]).filter((_, i) => index != i));
+    console.log(res);
+  };
+
+  const handleSold = async (index: number) => {
+    try {
+      const listingId = (listings as IListing[])[index]?._id;
+      const mahiti = {
+        ...(listings as IListing[])[index],
+        sold: true,
+      };
+      const result = await dispatch(
+        editListingAsync({ mahiti, listingId: listingId as string })
+      );
+      console.log(result.payload);
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (
-    <>
-      {data &&
-        data.map((list, index) => {
+    <div className="flex flex-col min-h-screen">
+      {listings &&
+        listings.map((list, index) => {
           return (
             <div
               key={list._id}
@@ -95,6 +117,12 @@ function Listings() {
                 >
                   DELETE
                 </button>
+                <button
+                  className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded ml-6"
+                  onClick={() => handleSold(index)}
+                >
+                  SOLD
+                </button>
                 <Link to={`/edit-listing/${list._id}`}>
                   <button className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded ml-6">
                     EDIT
@@ -104,7 +132,12 @@ function Listings() {
             </div>
           );
         })}
-    </>
+      <footer className="sticky-bottom mt-auto footer footer-center p-4 bg-base-300 text-base-content ">
+        <aside>
+          <p className="text-blue-600">Click on SOLD button when product is sold and DELETE when don't want to sell anymore for sparing yourself of useless messages regarding your listing</p>
+        </aside>
+      </footer>
+    </div>
   );
 }
 

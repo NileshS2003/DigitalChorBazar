@@ -12,6 +12,7 @@ const ListingSchema = new mongoose.Schema(
     isNegotiable: { type: Boolean, required: true },
     seller_Id: { type: Schema.Types.ObjectId, ref: "User", required: true },
     sold: { type: Boolean, default: false },
+    college: { type: String, default: false },
   },
   { timestamps: true }
 );

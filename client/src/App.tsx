@@ -14,6 +14,7 @@ import EditListingPage from "./pages/EditListingPage.tsx";
 import ProfilePage from "./pages/ProfilePage.tsx";
 import ContactPage from "./pages/ContactPage.tsx";
 import Search from "./pages/Search.tsx";
+import ListingDetail from "./pages/ListingDetails.tsx";
 // import { getAllListingsAsync } from "./features/lisitng/listingSlice.ts";
 // import PrivateRoute from "./components/PrivateRoute.tsx";
 
@@ -24,9 +25,8 @@ function App() {
     dispatch(fetchUserAsync());
     // dispatch(getAllListingsAsync())
   }, [dispatch]);
-  
+
   return (
-    
     <BrowserRouter>
       {<Header />}
       <Routes>
@@ -34,13 +34,14 @@ function App() {
         <Route path="/sign-in" element={<SignInPage />} />
         <Route path="/sign-up" element={<SignUpPage />} />
         <Route path="/about" element={<About />} />
-        <Route path="/contact" element={<ContactPage/>}/>
-        <Route path="/search" element={<Search />} />
+        <Route path="/contact" element={<ContactPage />} />
+        <Route path="/search" element={<Search />} /> 
         {/* <Route element={<PrivateRoute />}> */}
         <Route path="/listing" element={<Listings />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/create-listing" element={<CreateListingPage />} />
         <Route path="/edit-listing/:id" element={<EditListingPage />} />
+        <Route path="/listing/:id" element={<ListingDetail />} />
         {/* </Route> */}
       </Routes>
     </BrowserRouter>

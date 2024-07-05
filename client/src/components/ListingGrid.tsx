@@ -28,7 +28,7 @@ function ListingGrid(props: ListingProps) {
             <div className="flex items-center gap-1">
               <MdLocationOn className="h-4 w-4 text-green-700" />
               <p className="text-sm text-gray-600 truncate w-full">
-                {listing.used_time}
+                {listing.college}
               </p>
             </div>
             <p className="text-sm text-gray-600 line-clamp-2">

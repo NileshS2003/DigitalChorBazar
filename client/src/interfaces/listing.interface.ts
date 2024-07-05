@@ -1,3 +1,5 @@
+import { IUser } from "./user.interface";
+
 export interface IListingData {
   title: string;
   description: string;
@@ -19,8 +21,8 @@ export interface IListing {
   photos: string[];
   used_time: string;
   isNegotiable: boolean;
-  seller_Id: string;
-  sold: string;
+  seller_Id: string | IUser;
+  sold: boolean;
   createdAt: string;
   updatedAt: string;
   college: string;

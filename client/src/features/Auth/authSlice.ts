@@ -52,7 +52,7 @@ export const SignInUserAsync = createAsyncThunk<
 
 export const SignInWithGoogleAsync = createAsyncThunk<
   IUser,
-  { email: string; username: string },
+  { email: string; username: string, pfp:string },
   { rejectValue: ErrorPayloadType }
 >("auth/signinUserWithGoogle", async (userdata, { rejectWithValue }) => {
   try {

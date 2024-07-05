@@ -14,6 +14,7 @@ import {
 import { errorhandler } from "../../../utils";
 import { RootState, useAppDispatch } from "../../../app/store";
 import { createListingAsync } from "../listingSlice";
+import { IUser } from "../../../interfaces/user.interface";
 
 function CreateListing() {
   const { register, handleSubmit } = useForm();
@@ -98,7 +99,7 @@ function CreateListing() {
       const mahiti = {
         seller_Id: loggedInUser?._id,
         photos: ImageUrls,
-        college: loggedInUser?.college,
+        college: (loggedInUser as IUser).college,
         ...rest,
       };
       const result = await dispatch(createListingAsync(mahiti));

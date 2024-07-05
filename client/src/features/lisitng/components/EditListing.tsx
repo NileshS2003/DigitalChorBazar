@@ -15,6 +15,7 @@ import { errorhandler } from "../../../utils";
 import { RootState, useAppDispatch } from "../../../app/store";
 import { editListingAsync } from "../listingSlice";
 import { IListing } from "../../../interfaces/listing.interface";
+import { IUser } from "../../../interfaces/user.interface";
 
 function EditListing() {
   const { register, handleSubmit, setValue } = useForm<IListing>({
@@ -108,10 +109,11 @@ function EditListing() {
 
       const { imageUrls, ...rest } = data;
       const mahiti: IListing = {
+        ...rest,
         seller_Id: loggedInUser?._id,
+        college: (loggedInUser as IUser).college,
         photos: ImageUrls,
         _id:listing?._id,
-        ...rest,
       };
       const listingId = listing?._id;
       const result = await dispatch(

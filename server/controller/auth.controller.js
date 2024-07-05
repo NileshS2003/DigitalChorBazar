@@ -59,10 +59,10 @@ export const signin = async (req, res, next) => {
   }
 };
 
-export const google = async (req, res, next) => {
+export const google = async (req, res, next) => { 
   try {
     // 1. Extract Data (consider validation):
-    const { email, username } = req.body;
+    const { email, username, pfp } = req.body;
 
     if (!email) {
       return res.status(400).json({ message: "Missing required field: email" });
@@ -92,6 +92,7 @@ export const google = async (req, res, next) => {
         : email.split("@")[0].toLowerCase(), // Use first part of email if no username provided
       email,
       password: hashedPass,
+      pfp
     });
 
     // 5. Save User and Generate Token:

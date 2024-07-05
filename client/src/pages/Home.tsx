@@ -22,7 +22,6 @@ import { useAppDispatch } from "../app/store";
 import { IListing } from "../interfaces/listing.interface";
 
 function Home() {
-  const [herolistings, setherolistings] = useState<IListing[]>([]);
   const [options, setOptions] = useState<string[]>([]);
   const listings = useSelector(selectListings);
   const loggedInUser = useSelector(selectLoggedInUser);
@@ -37,28 +36,14 @@ function Home() {
       setOptions(optionset);
     }
     fetchCategories();
-
-    async function HerolListing() {
-      if (listings) {
-        const some =
-          loggedInUser?.college !== undefined
-            ? listings?.filter((list) => list.college === loggedInUser.college)
-            : listings?.filter((list) => list.isNegotiable === true);
-        console.log((listings as IListing[])[0].college);
-
-        setherolistings(some as IListing[]);
-      }
-    }
-    HerolListing();
   }, []);
 
-  console.log(herolistings);
   /**********************Creating Hero section Data *************/
 
   const collegeListings = listings?.filter(
     (list) => list.college === loggedInUser?.college
   );
-  // : null;
+  const offerListings = listings?.filter((list) => list.isNegotiable === true);
 
   /***********************Making Map for storing different listings in their respective section*********** */
 
@@ -123,7 +108,7 @@ function Home() {
                         {/* Buttons */}
                         <div className="mt-7 grid gap-3 w-full sm:inline-flex">
                           <Link
-                            to={`/product-detail/${listing._id}`}
+                            to={`/listing/${listing._id}`}
                             className="py-3 px-4 inline-flex justify-center items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none"
                           >
                             Details
@@ -164,27 +149,26 @@ function Home() {
           </div>
         </div>
       ) : (
-        herolistings && (
-          <div>
-            <h1 className="block text-center text-3xl font-bold text-gray-800 sm:text-4xl lg:text-6xl lg:leading-tight py-3">
-              Today's biggest
-              <span className="text-blue-600"> Offers</span>
-            </h1>
-            <div className="bg-white mx-auto max-w-7xl">
-              {/* Hero */}
-              <Swiper
-                modules={[Navigation, Pagination, Autoplay]}
-                spaceBetween={30}
-                slidesPerView={1}
-                navigation
-                pagination={{ clickable: true }}
-                autoplay={{
-                  delay: 2500, // Delay between slides in milliseconds (1000ms = 1 second)
-                  disableOnInteraction: false, // Autoplay will not be disabled after interactions
-                }}
-              >
-                {/* {console.log(herolistings)} */}
-                {herolistings.map((listing) => (
+        <div>
+          <h1 className="block text-center text-3xl font-bold text-gray-800 sm:text-4xl lg:text-6xl lg:leading-tight py-3">
+            Today's biggest
+            <span className="text-blue-600"> Offers</span>
+          </h1>
+          <div className="bg-white mx-auto max-w-7xl">
+            {/* Hero */}
+            <Swiper
+              modules={[Navigation, Pagination, Autoplay]}
+              spaceBetween={30}
+              slidesPerView={1}
+              navigation
+              pagination={{ clickable: true }}
+              autoplay={{
+                delay: 2500, // Delay between slides in milliseconds (1000ms = 1 second)
+                disableOnInteraction: false, // Autoplay will not be disabled after interactions
+              }}
+            >
+              {offerListings &&
+                offerListings.map((listing) => (
                   <SwiperSlide
                     className="my-3 px-6 py-8 sm:px-8 sm:py-8 "
                     key={listing._id.toString()}
@@ -237,10 +221,54 @@ function Home() {
                     </div>
                   </SwiperSlide>
                 ))}
-              </Swiper>
-            </div>
+            </Swiper>
+            {loggedInUser === null ? (
+              <Link
+                to={`/sign-in`}
+                className="flex text-sm my-1 text-blue-600 ml-8 items-center"
+              >
+                {" "}
+                Sign In to get personalized recommendation{" "}
+                <svg
+                  className="flex-shrink-0 size-3"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width={24}
+                  height={24}
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="m9 18 6-6-6-6" />
+                </svg>
+              </Link>
+            ) : (
+              <Link
+                to={`/profile`}
+                className="flex text-sm my-1 text-blue-600 ml-8 items-center"
+              >
+                {" "}
+                Complete your profile page to get personalized recommendation{" "}
+                <svg
+                  className="flex-shrink-0 size-3"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width={24}
+                  height={24}
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="m9 18 6-6-6-6" />
+                </svg>
+              </Link>
+            )}
           </div>
-        )
+        </div>
       )}
 
       <div className="max-w-6xl mx-auto p-3 flex flex-col gap-8 my-10">

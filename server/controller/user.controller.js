@@ -8,9 +8,22 @@ export const updateUser = async (req, res) => {
 
     if (arg1 !== arg2) return errorhandler(403, "Forbidden");
 
-    const user = await User.findByIdAndUpdate(req.params.id, req.body);
+    const college = req.body.college.trimStart();
+    const city = req.body.city.trimStart();
+    const state = req.body.state.trimStart();
+    const contact_number = req.body.contact_number.trimStart();
 
-    res.json(user).status(200);
+    const user = await User.findByIdAndUpdate(req.params.id, {
+      ...req.body,
+      college,
+      city,
+      state,
+      contact_number,
+    });
+
+    const {password, ...doc}=user._doc
+
+    res.json(doc).status(200);
   } catch (error) {
     next(error);
   }
