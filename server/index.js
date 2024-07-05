@@ -24,6 +24,8 @@ const corsConfig={
   methods:["GET","PUT","PATCH","DELETE","POST","OPTIONS"]
 }
 
+app.options("", cors(corsConfig))
+
 app.use(
   session({
     secret: process.env.JWT_SECRET, // Change this to a random string (used for session encryption)
