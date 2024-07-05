@@ -18,6 +18,12 @@ app.use(cors());
 app.use(cookieParser());
 app.use(express.json());
 
+const corsConfig={
+  origin:'*',
+  credentials:true,
+  methods:["GET","PUT","PATCH","DELETE","POST","OPTIONS"]
+}
+
 app.use(
   session({
     secret: process.env.JWT_SECRET, // Change this to a random string (used for session encryption)
